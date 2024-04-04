@@ -3,42 +3,11 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QApplication, QBoxLayout, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget, QMainWindow, QPushButton, QVBoxLayout, QWidget
 import os
 import pathlib
+from Functions import GetExcelFileName
 from MergeWindow import MergeWindow
-from GlobalVar import GlobalVar
+from ExcelDataBase import ExcelDataBase
 
-def RemovingFileExt(fileName):
-    fileNameNoExt = ""
-
-    for i in range(0, len(fileName)):
-        if(fileName[i] == "."):
-            break
-        else:
-            fileNameNoExt = fileNameNoExt + fileName[i]
-
-    return(fileNameNoExt)
-
-def GetExcelFileName(path):
-    count = 0
-    for i in range(0, len(path)):
-        if(path[i] == "/"):
-           count = count + 1
-
-    file = ""
-    for i in range(0, len(path)):
-        if(path[i] == "/"):
-           count = count - 1
-
-
-        if(count == -1):
-            file = file + path[i]
-
-        if(count == 0):
-            count = -1
-            
-    return(file)
-
-
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, ExcelDataBase):
 #-------------------MAINWINDOW---------------------------
     def __init__(self):
         super().__init__()
@@ -52,10 +21,7 @@ class MainWindow(QMainWindow):
         addButton = QPushButton("Add")
         buildButton = QPushButton("Build Folder")
         self.buildDirectory = QLabel(os.getcwd())
-        self.displayExcel = QListWidget()
-
-        self.excelList = []
-        
+        self.displayExcel = QListWidget()        
         mainLayout = QVBoxLayout()
 #-------------------Initialization--------------------------- 
 #-------------------Formatting---------------------------         
@@ -82,12 +48,12 @@ class MainWindow(QMainWindow):
         excelName = QFileDialog.getOpenFileName(self, "Add Excels", "C:/", "Excel Files (*.xlsx)")
         if (excelName != ("","")):
             #Number of excels to be merged
-            GlobalVar().ExcelList().append(excelName[0])
+            ExcelDataBase.excelList.append(excelName[0])
             
 #-------------------Display---------------------------
             self.displayExcel.clear()      
-            for i in range(0, len(GlobalVar().ExcelList())):
-                userExcelFile = GetExcelFileName(GlobalVar().ExcelList()[i])
+            for i in range(0, len(ExcelDataBase.excelList)):
+                userExcelFile = GetExcelFileName(ExcelDataBase.excelList[i])
                 self.displayExcel.addItem(userExcelFile)
 #-------------------Display---------------------------        
         
@@ -106,9 +72,9 @@ class MainWindow(QMainWindow):
         self.mergeWindow.show()
         
 #-------------------Functions---------------------------          
-
-
+        
 if __name__ == "__main__":
+    ExcelDataBase().initialize()
     app = QApplication([])
     window = MainWindow()
     window.show()
