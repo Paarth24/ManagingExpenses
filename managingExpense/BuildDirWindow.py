@@ -1,9 +1,10 @@
+from PyQt5.QtGui import QCloseEvent, QWindow
 from PyQt5.QtWidgets import QFileDialog, QWidget
 import pathlib
 import os
 from BuildDirPath import BuildDirPath
 
-class BuildDirWindow(QWidget, BuildDirPath):
+class BuildDirWindow(BuildDirPath):
 
     def __init__(self):
         super().__init__()
@@ -15,7 +16,8 @@ class BuildDirWindow(QWidget, BuildDirPath):
         os.chdir(pureBuildPath)
         BuildDirPath.buildDir.setText(os.getcwd())
         
-        self.close()
+    def closeEvent(self, event):
+       self.close()
 
 
 

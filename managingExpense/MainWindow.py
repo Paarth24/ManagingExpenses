@@ -1,10 +1,12 @@
-from PyQt5.QtGui import QCloseEvent
 from openpyxl import Workbook, load_workbook
 from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QApplication, QBoxLayout, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QListView, QListWidget, QMainWindow, QPushButton, QVBoxLayout, QWidget
-import os
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QPushButton, QVBoxLayout, QWidget
+
 import pathlib
-from BuildDirWindow import BuildDirWindow
+import os
+
+from BuildDirPath import BuildDirPath
+#from BuildDirWindow import BuildDirWindow 
 from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName
 from MergeWindow import MergeWindow
@@ -22,15 +24,14 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
 #-------------------Initialization---------------------------        
         mergeButton = QPushButton("Merge")
         addButton = QPushButton("Add")
-        buildButton = QPushButton("Build Folder")
-        self.buildDirectory = QLabel(os.getcwd())       
+        buildButton = QPushButton("Build Folder")       
         mainLayout = QVBoxLayout()
 #-------------------Initialization--------------------------- 
 #-------------------Formatting---------------------------         
         mainLayout.addWidget(mergeButton)
         mainLayout.addWidget(addButton)
         mainLayout.addWidget(buildButton)
-        mainLayout.addWidget(self.buildDirectory)
+        mainLayout.addWidget(BuildDirPath.buildDir)
         mainLayout.addWidget(ExcelDisplayList.excelDisplay)
 
         mainContainer = QWidget()
@@ -47,30 +48,35 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
        
 #-------------------Functions--------------------------- 
     def AddingExcelFiles(self):
-        excelName = QFileDialog.getOpenFileName(self, "Add Excels", "C:/", "Excel Files (*.xlsx)")
-        if (excelName != ("","")):
-            #Number of excels to be merged
-            ExcelDataBase.excelList.append(excelName[0])         
+        excelNames = QFileDialog.getOpenFileNames(self, "Add Excels", "C:/", "Excel Files (*.xlsx)")
+        if (excelNames != None):
+            for i in range(0, len(excelNames) - 1):
+                ExcelDataBase.excelList.append(excelNames[i])
+            print(ExcelDataBase.excelList)
 #-------------------Display---------------------------
-            self.displayExcel.clear()      
+            ExcelDisplayList.excelDisplay.clear()      
             for i in range(0, len(ExcelDataBase.excelList)):
                 userExcelFile = GetExcelFileName(ExcelDataBase.excelList[i])
+                print(userExcelFile)
                 ExcelDisplayList.excelDisplay.addItem(userExcelFile)
 #-------------------Display---------------------------        
         
     
     def ChangingBuildDirectory(self):
-        #Changing build location
-        self.buildDirWindow = BuildDirWindow()
-        self.buildDirWindow.show()
+        
+        userPath = QFileDialog.getExistingDirectory(self, "Build Location", "C:/")
+        userDefinedPath = userPath
+        rawBuildPath = pathlib.PureWindowsPath(userDefinedPath)
+        pureBuildPath = str(rawBuildPath.as_posix())
+        os.chdir(pureBuildPath)
+        BuildDirPath.buildDir.setText(os.getcwd())
         
     def MergingAddedFiles(self):
         self.mergeWindow = MergeWindow()
         self.mergeWindow.show()
     
     def closeEvent(self, event):
-        if(self.mergeWindow.isVisible()):
-            self.mergeWindow.close()
+        QApplication.closeAllWindows()
 #-------------------Functions---------------------------
 
 
