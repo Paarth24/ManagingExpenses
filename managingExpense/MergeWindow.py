@@ -1,10 +1,11 @@
 from PyQt5.QtCore import QSize
 from openpyxl import Workbook, load_workbook
-from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
 from ExcelDataBase import ExcelDataBase
+from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName, AddingFileExt
 
-class MergeWindow(QWidget, ExcelDataBase):
+class MergeWindow(QWidget, ExcelDataBase, ExcelDisplayList):
     def __init__(self):
         super().__init__()
         
@@ -82,9 +83,11 @@ class MergeWindow(QWidget, ExcelDataBase):
 
         #Saving the Build File
         docBuildWorkbook.save(self.buildFileNameExt)
-        print("Merged")
         
         #Clearing Display
+        ExcelDisplayList.excelDisplay.clear()
+
+        self.close()
             
 
 

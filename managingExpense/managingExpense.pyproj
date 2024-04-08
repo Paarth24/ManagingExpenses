@@ -25,6 +25,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BuildDirWindow.py" />
+    <Compile Include="BuildDirPath.py" />
+    <Compile Include="ExcelDisplayList.py" />
+    <Compile Include="MainWindow.py" />
     <Compile Include="ExcelDataBase.py" />
     <Compile Include="MergeWindow.py" />
     <Compile Include="main.py" />
