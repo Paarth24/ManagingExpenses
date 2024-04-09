@@ -22,16 +22,16 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         self.setMinimumSize(QSize(500, 300))
 #-------------------configuration---------------------------
 #-------------------Initialization---------------------------        
+        mainLayout = QVBoxLayout()
         mergeButton = QPushButton("Merge")
         addButton = QPushButton("Add")
         buildButton = QPushButton("Build Folder")       
-        mainLayout = QVBoxLayout()
 #-------------------Initialization--------------------------- 
 #-------------------Formatting---------------------------         
         mainLayout.addWidget(mergeButton)
         mainLayout.addWidget(addButton)
         mainLayout.addWidget(buildButton)
-        mainLayout.addWidget(BuildDirPath.buildDir)
+        mainLayout.addWidget(BuildDirPath.buildDirLabel)
         mainLayout.addWidget(ExcelDisplayList.excelDisplay)
 
         mainContainer = QWidget()
@@ -48,16 +48,15 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
        
 #-------------------Functions--------------------------- 
     def AddingExcelFiles(self):
+        
         excelNames = QFileDialog.getOpenFileNames(self, "Add Excels", "C:/", "Excel Files (*.xlsx)")
         if (excelNames != None):
-            for i in range(0, len(excelNames) - 1):
-                ExcelDataBase.excelList.append(excelNames[i])
-            print(ExcelDataBase.excelList)
+            for i in range(0, len(excelNames[0])):
+                ExcelDataBase.excelList.append(excelNames[0][i])
 #-------------------Display---------------------------
             ExcelDisplayList.excelDisplay.clear()      
             for i in range(0, len(ExcelDataBase.excelList)):
                 userExcelFile = GetExcelFileName(ExcelDataBase.excelList[i])
-                print(userExcelFile)
                 ExcelDisplayList.excelDisplay.addItem(userExcelFile)
 #-------------------Display---------------------------        
         
@@ -69,7 +68,7 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         rawBuildPath = pathlib.PureWindowsPath(userDefinedPath)
         pureBuildPath = str(rawBuildPath.as_posix())
         os.chdir(pureBuildPath)
-        BuildDirPath.buildDir.setText(os.getcwd())
+        BuildDirPath.buildDirLabel.setText("Build Folder - {}".format(os.getcwd()))
         
     def MergingAddedFiles(self):
         self.mergeWindow = MergeWindow()

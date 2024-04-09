@@ -3,7 +3,8 @@ import os
 
 class BuildDirPath():
     def Initialize(self):
-        BuildDirPath.buildDir = QLabel(os.getcwd())
+
+        BuildDirPath.buildDirLabel = QLabel("Build Folder - {}".format(os.getcwd()))
 
 
 

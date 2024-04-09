@@ -14,7 +14,7 @@ class BuildDirWindow(BuildDirPath):
         rawBuildPath = pathlib.PureWindowsPath(userDefinedPath)
         pureBuildPath = str(rawBuildPath.as_posix())
         os.chdir(pureBuildPath)
-        BuildDirPath.buildDir.setText(os.getcwd())
+        BuildDirPath.buildDirLabel.setText(os.getcwd())
         
     def closeEvent(self, event):
        self.close()
