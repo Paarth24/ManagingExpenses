@@ -25,8 +25,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BuildDirWindow.py" />
     <Compile Include="BuildDirPath.py" />
+    <Compile Include="ErrorWindow.py" />
     <Compile Include="ExcelDisplayList.py" />
     <Compile Include="MainWindow.py" />
     <Compile Include="ExcelDataBase.py" />

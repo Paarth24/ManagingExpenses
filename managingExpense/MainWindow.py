@@ -1,4 +1,3 @@
-from openpyxl import Workbook, load_workbook
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
@@ -6,7 +5,6 @@ import pathlib
 import os
 
 from BuildDirPath import BuildDirPath
-#from BuildDirWindow import BuildDirWindow 
 from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName
 from MergeWindow import MergeWindow
@@ -18,7 +16,7 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         super().__init__()
 
 #-------------------configuration---------------------------
-        self.setWindowTitle("Test App")
+        self.setWindowTitle("Managing Expenses")
         self.setMinimumSize(QSize(500, 300))
 #-------------------configuration---------------------------
 #-------------------Initialization---------------------------        

@@ -1,22 +1,30 @@
-from PyQt5.QtCore import QSize
 from openpyxl import Workbook, load_workbook
 from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
+
+from ErrorWindow import ErrorWindow
 from ExcelDataBase import ExcelDataBase
 from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName, AddingFileExt
 
-class MergeWindow(QWidget, ExcelDataBase, ExcelDisplayList):
+
+
+
+class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
     def __init__(self):
         super().__init__()
+        
+        self.setWindowTitle("Merge Window")
+        self.setMinimumSize(250, 100)
         
         self.buildFileNameNoExt = "Final_Bank_Statement"
         self.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
 
         layout = QVBoxLayout()
         
-        self.buildFileLabel = QLabel("Build File Name - {}".format(self.buildFileNameNoExt))
+        self.buildFileLabel = QLabel("Build File Name - {}(Default)".format(self.buildFileNameNoExt))
         self.buildFileInput = QLineEdit()
         self.mergeButton = QPushButton("Merge")
+        self.container = QWidget()
         
         self.buildFileInput.setPlaceholderText("Enter Build File Name")
 
@@ -24,7 +32,8 @@ class MergeWindow(QWidget, ExcelDataBase, ExcelDisplayList):
         layout.addWidget(self.buildFileInput)
         layout.addWidget(self.mergeButton)
         
-        self.setLayout(layout)
+        self.container.setLayout(layout)
+        self.setCentralWidget(self.container)
         
         self.buildFileInput.textChanged.connect(self.ChangedBuildFileName)
         self.mergeButton.clicked.connect(self.FinalMerge)
@@ -39,10 +48,17 @@ class MergeWindow(QWidget, ExcelDataBase, ExcelDisplayList):
         numExcelToMerge = len(ExcelDataBase.excelList)
         
         if(numExcelToMerge == 0):
-            self.buildFileLabel.setText("Files to be Merged are not Provided")
-            
-        else:
+            self.error = ErrorWindow()
+            self.error.show()
+            ErrorWindow.label.setText("Files to be Merged are not Provided")
         
+        elif(self.buildFileNameNoExt.isspace() == True or self.buildFileNameNoExt == ""):
+            self.error = ErrorWindow()
+            self.error.show()
+            ErrorWindow.label.setText("Build File Needs to have a Name")
+        
+        else:
+            
             #Creating build excel
             docBuildWorkbook = Workbook()
             docBuildSheet = docBuildWorkbook.active
@@ -95,5 +111,5 @@ class MergeWindow(QWidget, ExcelDataBase, ExcelDisplayList):
             self.close()
             
 
-
+   
 
