@@ -5,6 +5,7 @@ from ErrorWindow import ErrorWindow
 from ExcelDataBase import ExcelDataBase
 from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName, AddingFileExt
+from MergeConfirm import MergeConfirm
 
 
 
@@ -107,6 +108,9 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
         
             #Clearing Display
             ExcelDisplayList.excelDisplay.clear()
+
+            self.mergeConfirmWindow = MergeConfirm()
+            self.mergeConfirmWindow.show()
 
             self.close()
             
