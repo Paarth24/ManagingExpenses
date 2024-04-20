@@ -21,7 +21,7 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
         self.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
 
         layout = QVBoxLayout()
-        
+
         self.buildFileLabel = QLabel("Build File Name - {}(Default)".format(self.buildFileNameNoExt))
         self.buildFileInput = QLineEdit()
         self.mergeButton = QPushButton("Merge")
@@ -83,6 +83,7 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
                 docBuildSheet.column_dimensions["C"].width = 15
                 docBuildSheet.column_dimensions["D"].width = 15
                 docBuildSheet.column_dimensions["E"].width = 15
+                docBuildSheet.column_dimensions["F"].width = 23
     
     
                 #Reading and writing from an excel
@@ -92,12 +93,8 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
                     for j in range(1, maxColumn):
                         column = chr(64+j)
                         userCell = column + userRow
-                        row.append(docUserSheet[userCell].value)            
-        
-                    docBuildSheet.append(row)
-    
-                docBuildSheet.append(["Above is the excel - {}".format(GetExcelFileName(self.excelList[numExcelMerged]))])
-                docBuildSheet.append([])
+                        row.append(docUserSheet[userCell].value)
+                    row.append(GetExcelFileName(self.excelList[numExcelMerged]))
     
                 numExcelMerged = numExcelMerged + 1
         
@@ -108,9 +105,10 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
         
             #Clearing Display
             ExcelDisplayList.excelDisplay.clear()
+            
 
-            self.mergeConfirmWindow = MergeConfirm()
-            self.mergeConfirmWindow.show()
+            self.MergeConfirmWindow = MergeConfirm()
+            self.MergeConfirmWindow.show()
 
             self.close()
             
