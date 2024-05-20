@@ -1,15 +1,12 @@
-from BuildDirPath import BuildDirPath
-from ExcelDisplayList import ExcelDisplayList
+from Resources import RESOURCES
 from MainWindow import MainWindow
-from ExcelDataBase import ExcelDataBase
 from PyQt5.QtWidgets import QApplication
+from MergeWindow import MergeWindow
         
 if __name__ == "__main__":
     app = QApplication([])
     
-    ExcelDataBase().Initialize()
-    ExcelDisplayList().Initialize()
-    BuildDirPath().Initialize()
+    RESOURCES().Initialize()
     
     window = MainWindow()
     

@@ -4,13 +4,11 @@ from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QPushButton,
 import pathlib
 import os
 
-from BuildDirPath import BuildDirPath
-from ExcelDisplayList import ExcelDisplayList
 from Functions import GetExcelFileName
 from MergeWindow import MergeWindow
-from ExcelDataBase import ExcelDataBase  
+from Resources import RESOURCES  
 
-class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
+class MainWindow(QMainWindow, RESOURCES):
 #-------------------MAINWINDOW---------------------------
     def __init__(self):
         super().__init__()
@@ -29,8 +27,8 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         mainLayout.addWidget(mergeButton)
         mainLayout.addWidget(addButton)
         mainLayout.addWidget(buildButton)
-        mainLayout.addWidget(BuildDirPath.buildDirLabel)
-        mainLayout.addWidget(ExcelDisplayList.excelDisplay)
+        mainLayout.addWidget(RESOURCES.buildDirLabel)
+        mainLayout.addWidget(RESOURCES.excelDisplay)
 
         mainContainer = QWidget()
         mainContainer.setLayout(mainLayout)
@@ -50,12 +48,12 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         excelNames = QFileDialog.getOpenFileNames(self, "Add Excels", "C:/", "Excel Files (*.xlsx)")
         if (excelNames != None):
             for i in range(0, len(excelNames[0])):
-                ExcelDataBase.excelList.append(excelNames[0][i])
+                RESOURCES.excelList.append(excelNames[0][i])
 #-------------------Display---------------------------
-            ExcelDisplayList.excelDisplay.clear()      
-            for i in range(0, len(ExcelDataBase.excelList)):
-                userExcelFile = GetExcelFileName(ExcelDataBase.excelList[i])
-                ExcelDisplayList.excelDisplay.addItem(userExcelFile)
+            RESOURCES.excelDisplay.clear()      
+            for i in range(0, len(RESOURCES.excelList)):
+                userExcelFile = GetExcelFileName(RESOURCES.excelList[i])
+                RESOURCES.excelDisplay.addItem(userExcelFile)
 #-------------------Display---------------------------        
         
     
@@ -64,9 +62,9 @@ class MainWindow(QMainWindow, ExcelDataBase, ExcelDisplayList):
         userPath = QFileDialog.getExistingDirectory(self, "Build Location", "C:/")
         userDefinedPath = userPath
         rawBuildPath = pathlib.PureWindowsPath(userDefinedPath)
-        pureBuildPath = str(rawBuildPath.as_posix())
+        pureBuildPath = rawBuildPath.as_posix()
         os.chdir(pureBuildPath)
-        BuildDirPath.buildDirLabel.setText("Build Folder - {}".format(os.getcwd()))
+        RESOURCES.buildDirLabel.setText("Build Folder - {}".format(os.getcwd()))
         
     def MergingAddedFiles(self):
         self.mergeWindow = MergeWindow()

@@ -2,27 +2,26 @@ from openpyxl import Workbook, load_workbook
 from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 from ErrorWindow import ErrorWindow
-from ExcelDataBase import ExcelDataBase
-from ExcelDisplayList import ExcelDisplayList
+from Resources import RESOURCES
 from Functions import GetExcelFileName, AddingFileExt
-from MergeConfirm import MergeConfirm
+from AfterMerge import AfterMerge
 
 
 
 
-class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
+class MergeWindow(ErrorWindow, RESOURCES):
     def __init__(self):
         super().__init__()
         
         self.setWindowTitle("Merge Window")
         self.setMinimumSize(250, 100)
         
-        self.buildFileNameNoExt = "Final_Bank_Statement"
-        self.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
+        RESOURCES.buildFileNameNoExt = "Final_Bank_Statement"
+        RESOURCES.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
 
         layout = QVBoxLayout()
 
-        self.buildFileLabel = QLabel("Build File Name - {}(Default)".format(self.buildFileNameNoExt))
+        self.buildFileLabel = QLabel("Build File Name - {}(Default)".format(RESOURCES.buildFileNameNoExt))
         self.buildFileInput = QLineEdit()
         self.mergeButton = QPushButton("Merge")
         self.container = QWidget()
@@ -40,20 +39,20 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
         self.mergeButton.clicked.connect(self.FinalMerge)
     
     def ChangedBuildFileName(self):
-        self.buildFileNameNoExt = self.buildFileInput.text()
-        self.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
-        self.buildFileLabel.setText("Build File Name - {}".format(self.buildFileNameNoExt))
+        self.buildFileNameNoExt = RESOURCES.buildFileInput.text()
+        self.buildFileNameExt = AddingFileExt(RESOURCES.buildFileNameNoExt)
+        self.buildFileLabel.setText("Build File Name - {}".format(RESOURCES.buildFileNameNoExt))
         
 
     def FinalMerge(self):
-        numExcelToMerge = len(ExcelDataBase.excelList)
+        numExcelToMerge = len(RESOURCES.excelList)
         
         if(numExcelToMerge == 0):
             self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Files to be Merged are not Provided")
         
-        elif(self.buildFileNameNoExt.isspace() == True or self.buildFileNameNoExt == ""):
+        elif(self.buildFileNameNoExt.isspace() == True or RESOURCES.buildFileNameNoExt == ""):
             self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Build File Needs to have a Name")
@@ -63,14 +62,14 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
             #Creating build excel
             docBuildWorkbook = Workbook()
             docBuildSheet = docBuildWorkbook.active
-            docBuildWorkbook.save(filename=self.buildFileNameExt)
+            docBuildWorkbook.save(filename=RESOURCES.buildFileNameExt)
         
             #Merge loop
             numExcelMerged = 0
             while(numExcelMerged != numExcelToMerge):
     
                 #Opening an excel
-                docUserWorkbook = load_workbook(ExcelDataBase.excelList[numExcelMerged])
+                docUserWorkbook = load_workbook(RESOURCES.excelList[numExcelMerged])
                 docUserSheet = docUserWorkbook.active
 
 
@@ -94,21 +93,24 @@ class MergeWindow(ErrorWindow, ExcelDataBase, ExcelDisplayList):
                         column = chr(64+j)
                         userCell = column + userRow
                         row.append(docUserSheet[userCell].value)
-                    row.append(GetExcelFileName(self.excelList[numExcelMerged]))
-    
+                    row.append(GetExcelFileName(RESOURCES.excelList[numExcelMerged]))
+                    
+                    docBuildSheet.append(row)
+                
+                
                 numExcelMerged = numExcelMerged + 1
         
-            ExcelDataBase.excelList.clear()
+            RESOURCES.excelList.clear()
 
             #Saving the Build File
-            docBuildWorkbook.save(self.buildFileNameExt)
+            docBuildWorkbook.save(RESOURCES.buildFileNameExt)
         
             #Clearing Display
-            ExcelDisplayList.excelDisplay.clear()
+            RESOURCES.excelDisplay.clear()
             
 
-            self.MergeConfirmWindow = MergeConfirm()
-            self.MergeConfirmWindow.show()
+            self.AfterMergeWindow = AfterMerge()
+            self.AfterMergeWindow.show()
 
             self.close()
             
