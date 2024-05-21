@@ -1,9 +1,11 @@
+import os
+import pathlib
 from openpyxl import Workbook, load_workbook
 from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 from ErrorWindow import ErrorWindow
 from Resources import RESOURCES
-from Functions import GetExcelFileName, AddingFileExt
+from Functions import GetExcelFileName, AddingFileExt, IfValue
 from AfterMerge import AfterMerge
 
 
@@ -46,6 +48,8 @@ class MergeWindow(ErrorWindow, RESOURCES):
 
     def FinalMerge(self):
         numExcelToMerge = len(RESOURCES.excelList)
+        rawBuildPath = pathlib.PureWindowsPath(os.getcwd())
+        pureBuildPath = rawBuildPath.as_posix()
         
         if(numExcelToMerge == 0):
             self.error = ErrorWindow()
@@ -57,6 +61,12 @@ class MergeWindow(ErrorWindow, RESOURCES):
             self.error.show()
             ErrorWindow.label.setText("Build File Needs to have a Name")
         
+        elif(os.path.isfile(pureBuildPath + "/" + RESOURCES.buildFileNameExt)):
+        
+            self.error = ErrorWindow()
+            self.error.show()
+            ErrorWindow.label.setText("Another File with the Same Name Already Exists")
+            
         else:
             
             #Creating build excel
@@ -66,6 +76,8 @@ class MergeWindow(ErrorWindow, RESOURCES):
         
             #Merge loop
             numExcelMerged = 0
+            headingValue = 0
+            
             while(numExcelMerged != numExcelToMerge):
     
                 #Opening an excel
@@ -95,8 +107,13 @@ class MergeWindow(ErrorWindow, RESOURCES):
                         row.append(docUserSheet[userCell].value)
                     row.append(GetExcelFileName(RESOURCES.excelList[numExcelMerged]))
                     
-                    docBuildSheet.append(row)
-                
+                    if(IfValue(row) == True):
+                        docBuildSheet.append(row)
+                    else:
+                        headingValue = headingValue + 1
+                        
+                        if(headingValue == 1):
+                            docBuildSheet.append(row)                
                 
                 numExcelMerged = numExcelMerged + 1
         
@@ -113,7 +130,3 @@ class MergeWindow(ErrorWindow, RESOURCES):
             self.AfterMergeWindow.show()
 
             self.close()
-            
-
-   
-
