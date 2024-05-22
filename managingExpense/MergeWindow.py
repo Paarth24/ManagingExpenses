@@ -1,3 +1,4 @@
+import datetime
 import os
 import pathlib
 from openpyxl import Workbook, load_workbook
@@ -5,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLa
 
 from ErrorWindow import ErrorWindow
 from Resources import RESOURCES
-from Functions import GetExcelFileName, AddingFileExt, IfValue
+from Functions import GetExcelFileName, AddingFileExt, IfValue, DATETIME
 from AfterMerge import AfterMerge
 
 
@@ -41,8 +42,8 @@ class MergeWindow(ErrorWindow, RESOURCES):
         self.mergeButton.clicked.connect(self.FinalMerge)
     
     def ChangedBuildFileName(self):
-        self.buildFileNameNoExt = RESOURCES.buildFileInput.text()
-        self.buildFileNameExt = AddingFileExt(RESOURCES.buildFileNameNoExt)
+        RESOURCES.buildFileNameNoExt = self.buildFileInput.text()
+        RESOURCES.buildFileNameExt = AddingFileExt(RESOURCES.buildFileNameNoExt)
         self.buildFileLabel.setText("Build File Name - {}".format(RESOURCES.buildFileNameNoExt))
         
 
@@ -60,13 +61,6 @@ class MergeWindow(ErrorWindow, RESOURCES):
             self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Build File Needs to have a Name")
-        
-        elif(os.path.isfile(pureBuildPath + "/" + RESOURCES.buildFileNameExt)):
-        
-            self.error = ErrorWindow()
-            self.error.show()
-            ErrorWindow.label.setText("Another File with the Same Name Already Exists")
-            
         else:
             
             #Creating build excel
@@ -75,6 +69,7 @@ class MergeWindow(ErrorWindow, RESOURCES):
             docBuildWorkbook.save(filename=RESOURCES.buildFileNameExt)
         
             #Merge loop
+            DATA = []
             numExcelMerged = 0
             headingValue = 0
             
@@ -108,15 +103,35 @@ class MergeWindow(ErrorWindow, RESOURCES):
                     row.append(GetExcelFileName(RESOURCES.excelList[numExcelMerged]))
                     
                     if(IfValue(row) == True):
-                        docBuildSheet.append(row)
+
+                        if(len(DATA) == 0):
+                            DATA.append(row)
+                            
+                        else:
+                            
+                            if(type(row[0]) == datetime.datetime):  
+                                
+                                for i in range (0, len(DATA)):
+                                    
+                                    if(type(DATA[i][0]) == datetime.datetime):
+                                        
+                                        if(row[0] < DATA[i][0]):
+                                            DATA.insert(i,row)
+
+                            else:
+                                DATA.append(row)
+                                row[0] = DATETIME(row[0])
+
                     else:
                         headingValue = headingValue + 1
                         
                         if(headingValue == 1):
                             docBuildSheet.append(row)                
-                
+                    
+                for i in range (0, len(DATA)):
+                    docBuildSheet.append(DATA[i])
+                    
                 numExcelMerged = numExcelMerged + 1
-        
             RESOURCES.excelList.clear()
 
             #Saving the Build File
