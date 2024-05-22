@@ -3,7 +3,6 @@ import os
 import pathlib
 from openpyxl import Workbook, load_workbook
 from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
-
 from ErrorWindow import ErrorWindow
 from Resources import RESOURCES
 from Functions import GetExcelFileName, AddingFileExt, IfValue, DATETIME
@@ -61,6 +60,13 @@ class MergeWindow(ErrorWindow, RESOURCES):
             self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Build File Needs to have a Name")
+
+        elif(os.path.isfile(pureBuildPath + "/" + RESOURCES.buildFileNameExt)):
+        
+            self.error = ErrorWindow()
+            self.error.show()
+            ErrorWindow.label.setText("Another File with the Same Name Already Exists")
+
         else:
             
             #Creating build excel
@@ -89,7 +95,7 @@ class MergeWindow(ErrorWindow, RESOURCES):
                 docBuildSheet.column_dimensions["C"].width = 15
                 docBuildSheet.column_dimensions["D"].width = 15
                 docBuildSheet.column_dimensions["E"].width = 15
-                docBuildSheet.column_dimensions["F"].width = 23
+                docBuildSheet.column_dimensions["F"].width = 25
     
     
                 #Reading and writing from an excel
@@ -104,34 +110,32 @@ class MergeWindow(ErrorWindow, RESOURCES):
                     
                     if(IfValue(row) == True):
 
-                        if(len(DATA) == 0):
-                            DATA.append(row)
-                            
-                        else:
-                            
-                            if(type(row[0]) == datetime.datetime):  
-                                
-                                for i in range (0, len(DATA)):
-                                    
-                                    if(type(DATA[i][0]) == datetime.datetime):
-                                        
-                                        if(row[0] < DATA[i][0]):
-                                            DATA.insert(i,row)
-
-                            else:
-                                DATA.append(row)
+                            if(type(row[0]) == str):
                                 row[0] = DATETIME(row[0])
+  
+                            if(len(DATA) == 0):
+                                DATA.append(row)
+ 
+                            else:
+                                for i in range (0, len(DATA)):
+                                        
+                                    if(row[0] <= DATA[i][0]):
+                                        DATA.insert(i,row)
+                                        break
 
                     else:
                         headingValue = headingValue + 1
                         
                         if(headingValue == 1):
+                            row[-1] = "Source File"
                             docBuildSheet.append(row)                
-                    
-                for i in range (0, len(DATA)):
-                    docBuildSheet.append(DATA[i])
-                    
+
+
                 numExcelMerged = numExcelMerged + 1
+                
+            for i in range (0, len(DATA)):
+                docBuildSheet.append(DATA[i])
+                
             RESOURCES.excelList.clear()
 
             #Saving the Build File
