@@ -1,12 +1,12 @@
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
-import pathlib
-import os
-
 from Functions import GetExcelFileName
 from MergeWindow import MergeWindow
-from Resources import RESOURCES  
+from Resources import RESOURCES
+
+import pathlib
+import os
 
 class MainWindow(QMainWindow, RESOURCES):
 #-------------------MAINWINDOW---------------------------
@@ -15,7 +15,7 @@ class MainWindow(QMainWindow, RESOURCES):
 
 #-------------------configuration---------------------------
         self.setWindowTitle("Managing Expenses")
-        self.setMinimumSize(QSize(500, 300))
+        self.setMinimumSize(QSize(500, 320))
 #-------------------configuration---------------------------
 #-------------------Initialization---------------------------        
         mainLayout = QVBoxLayout()

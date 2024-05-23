@@ -1,8 +1,7 @@
-import pathlib
 from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QImage
-from PyQt5.QtWidgets import QAbstractButton, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
 import os
+import pathlib
 
 from Resources import RESOURCES
 

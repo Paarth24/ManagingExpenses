@@ -1,22 +1,23 @@
-import datetime
-import os
-import pathlib
 from openpyxl import Workbook, load_workbook
-from PyQt5.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget
+
 from ErrorWindow import ErrorWindow
 from Resources import RESOURCES
 from Functions import GetExcelFileName, AddingFileExt, IfValue, DATETIME
 from AfterMerge import AfterMerge
 
-
-
+import os
+import pathlib
 
 class MergeWindow(ErrorWindow, RESOURCES):
     def __init__(self):
         super().__init__()
         
         self.setWindowTitle("Merge Window")
-        self.setMinimumSize(250, 100)
+        self.setFixedSize(250, 100)
+        
+        self.error = ErrorWindow()
+        self.AfterMergeWindow = AfterMerge()
         
         RESOURCES.buildFileNameNoExt = "Final_Bank_Statement"
         RESOURCES.buildFileNameExt = AddingFileExt(self.buildFileNameNoExt)
@@ -52,18 +53,15 @@ class MergeWindow(ErrorWindow, RESOURCES):
         pureBuildPath = rawBuildPath.as_posix()
         
         if(numExcelToMerge == 0):
-            self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Files to be Merged are not Provided")
         
         elif(self.buildFileNameNoExt.isspace() == True or RESOURCES.buildFileNameNoExt == ""):
-            self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Build File Needs to have a Name")
 
         elif(os.path.isfile(pureBuildPath + "/" + RESOURCES.buildFileNameExt)):
         
-            self.error = ErrorWindow()
             self.error.show()
             ErrorWindow.label.setText("Another File with the Same Name Already Exists")
 
@@ -144,8 +142,8 @@ class MergeWindow(ErrorWindow, RESOURCES):
             #Clearing Display
             RESOURCES.excelDisplay.clear()
             
-
-            self.AfterMergeWindow = AfterMerge()
             self.AfterMergeWindow.show()
-
-            self.close()
+            
+    def closeEvent(self, event):
+        self.error.close()
+        self.AfterMergeWindow.close()

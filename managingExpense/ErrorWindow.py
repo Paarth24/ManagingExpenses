@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QLabel, QMainWindow, QVBoxLayout, QWidget
 
 
@@ -6,6 +7,7 @@ class ErrorWindow(QMainWindow, QWidget):
         super().__init__()
         
         self.setWindowTitle("Error")
+        self.setFixedSize(QSize(250, 100))
         
         layout = QVBoxLayout()
         container = QWidget()

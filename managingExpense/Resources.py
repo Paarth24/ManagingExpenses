@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QListWidget, QWidget, QLabel
+from PyQt5.QtWidgets import QListWidget, QLabel
 import os
 
 class RESOURCES():
